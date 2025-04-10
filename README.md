@@ -43,22 +43,27 @@ Make sure you have the following installed:
 
 3. **Configure the database and JWT in `app.conf`**
    ```
-   MYSQL_USER=your_db_user
-   MYSQL_PASSWORD=your_db_password
-   MYSQL_HOST=localhost
-   MYSQL_PORT=3306
-   MYSQL_DATABASE=sepro_waf
+   appname = SeproWAF
+httpport = 8000
+runmode = dev
 
-   JWTSecret=your-secret-key-here
+JWTSecret = "your-secret-key-here"
 
-   # Proxy configuration
-   ProxyPort = 8080
-   ProxyHTTPSPort = 8443
+# Database configuration
+MYSQL_USER=root
+MYSQL_PASSWORD=
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_DATABASE=sepro_waf
 
-   # WAF configuration
-   WAFRulesDir = rules/
-   WAFLogDir = logs/waf
-   ```
+# Proxy configuration
+ProxyPort = 8080
+ProxyHTTPSPort = 8443
+
+# WAF configuration
+WAFRulesDir = rules/
+WAFLogDir = logs/waf
+```
 
 ---
 
