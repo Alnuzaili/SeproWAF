@@ -86,4 +86,7 @@ func init() {
 	web.Router("/api/dashboard/stats", &controllers.DashboardController{}, "get:GetStats")
 	web.Router("/api/dashboard/traffic", &controllers.DashboardController{}, "get:GetTraffic")
 	web.Router("/api/dashboard/attack-types", &controllers.DashboardController{}, "get:GetAttackTypes")
+	web.Router("/api/dashboard/top-attacked-sites", &controllers.DashboardController{}, "get:GetTopAttackedSites")
+	web.Router("/api/dashboard/attacks-by-hour", &controllers.DashboardController{}, "get:GetAttacksByHour")
+	web.Router("/api/dashboard/geo-distribution", &controllers.DashboardController{}, "get:GetGeoAttackDistribution")
 }

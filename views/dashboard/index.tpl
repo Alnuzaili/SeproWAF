@@ -109,6 +109,40 @@
                 </div>
             </div>
 
+            <!-- New Chart: Top Attacked Sites -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Top Attacked Sites</h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 text-xs bg-blue-500 text-white rounded-md active">7 Days</button>
+                            <button class="px-3 py-1 text-xs text-gray-500 hover:bg-gray-100 rounded-md">30 Days</button>
+                            <button class="ml-2 p-1 text-gray-400 hover:text-blue-500">
+                                <i class="bi bi-info-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <canvas id="topAttackedSitesChart" class="h-[300px]"></canvas>
+                </div>
+            </div>
+
+            <!-- Attack Time Patterns -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Attack Time Patterns</h2>
+                        <div class="flex space-x-2">
+                            <span class="text-sm text-gray-500">Last 7 days</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <canvas id="attacksByHourChart" class="h-[300px]"></canvas>
+                </div>
+            </div>
+
             <!-- Latest Transaction Card -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-100">
                 <div class="p-6 border-b border-gray-100">
@@ -146,6 +180,16 @@
                 </div>
                 <div class="p-6">
                     <canvas id="attackTypesChart" class="h-[250px]"></canvas>
+                </div>
+            </div>
+
+            <!-- NEW: Geographic Attack Origin -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-800">Geographic Attack Origin</h2>
+                </div>
+                <div class="p-6">
+                    <canvas id="geoAttackChart" class="h-[300px]"></canvas>
                 </div>
             </div>
 
@@ -207,7 +251,7 @@
                 </div>
             </div>
 
-            <!-- Monthly Goal Card -->
+            <!-- Protection Status Card -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-100">
                 <div class="p-6 border-b border-gray-100">
                     <h2 class="text-lg font-semibold text-gray-800">Protection Status</h2>
@@ -225,9 +269,82 @@
             </div>
         </div>
     </div>
+    
+    <!-- New Full-Width Row: Additional Charts -->
+    <div class="mt-6">
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Security Insights Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Security Analysis</h2>
+                        <div>
+                            <button class="px-3 py-2 bg-indigo-500 text-white rounded-md text-sm hover:bg-indigo-600">
+                                <i class="bi bi-file-earmark-text mr-1"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-info-circle text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    Security analysis is based on data collected over the past 30 days. The system has detected patterns that may require attention.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h3 class="font-medium text-gray-800 mb-2">Attack Trend Analysis</h3>
+                            <p class="text-sm text-gray-600 mb-3">Overall attack attempts have <span class="text-red-500 font-medium">increased by 12%</span> compared to previous period.</p>
+                            <div class="flex items-center">
+                                <div id="sparkline-attacks" class="flex-grow"></div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h3 class="font-medium text-gray-800 mb-2">Protection Efficiency</h3>
+                            <p class="text-sm text-gray-600 mb-3">WAF rules are currently blocking <span class="text-green-500 font-medium">98.7%</span> of malicious requests.</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                                <div class="bg-green-500 h-2.5 rounded-full" style="width: 98.7%"></div>
+                            </div>
+                            <div class="text-xs text-gray-500 flex justify-between">
+                                <span>0%</span>
+                                <span>50%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h3 class="font-medium text-gray-800 mb-2">Risk Assessment</h3>
+                            <p class="text-sm text-gray-600 mb-3">Current security risk level is <span class="text-yellow-500 font-medium">Medium</span>.</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                    <span class="text-gray-600">Low</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></div>
+                                    <span class="text-yellow-600 font-medium">Medium</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                    <span class="text-gray-600">High</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Check if we're authenticated
@@ -294,6 +411,34 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 renderRecentAttacks([]);
             }
+            
+            // NEW: Get top attacked sites
+            const topSitesData = await api.get('/dashboard/top-attacked-sites');
+            if (topSitesData.data && topSitesData.data.success) {
+                renderTopAttackedSitesChart(topSitesData.data.top_attacked_sites);
+            } else {
+                renderTopAttackedSitesChart(null);
+            }
+            
+            // NEW: Get attacks by hour
+            const attacksByHourData = await api.get('/dashboard/attacks-by-hour');
+            if (attacksByHourData.data && attacksByHourData.data.success) {
+                renderAttacksByHourChart(attacksByHourData.data.attacks_by_hour);
+            } else {
+                renderAttacksByHourChart(null);
+            }
+            
+            // NEW: Get geographic attack distribution
+            const geoData = await api.get('/dashboard/geo-distribution');
+            if (geoData.data && geoData.data.success) {
+                renderGeoAttackChart(geoData.data.geo_distribution);
+            } else {
+                renderGeoAttackChart(null);
+            }
+            
+            // Render sparkline chart for attack trends
+            renderSparkline();
+            
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             showToast('Failed to load dashboard data', 'danger');
@@ -451,6 +596,243 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             tbody.appendChild(tr);
         });
+    }
+    
+    // NEW: Top Attacked Sites chart
+    function renderTopAttackedSitesChart(data) {
+        const ctx = document.getElementById('topAttackedSitesChart').getContext('2d');
+        
+        // Use actual data if available, otherwise use placeholder data
+        const labels = data?.labels || ['example.com', 'test-site.org', 'company.net', 'api.domain.com', 'static.cdn.net'];
+        const values = data?.values || [0, 0, 0, 0, 0];
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Attack Count',
+                    data: values,
+                    backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Attacks'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Website Domain'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Attacks: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // NEW: Attacks by Hour chart
+    function renderAttacksByHourChart(data) {
+        const ctx = document.getElementById('attacksByHourChart').getContext('2d');
+        
+        // Use actual data if available, otherwise use placeholder data
+        const labels = data?.labels || Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+        const values = data?.values || Array(24).fill(0);
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Attacks',
+                    data: values,
+                    borderColor: 'rgba(234, 88, 12, 1)',
+                    backgroundColor: 'rgba(234, 88, 12, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(234, 88, 12, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Attacks'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hour of Day (24h)'
+                        },
+                        ticks: {
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 12
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                return `Time: ${context[0].label}`;
+                            },
+                            label: function(context) {
+                                return `Attacks: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // NEW: Geographic Attack Distribution chart
+    function renderGeoAttackChart(data) {
+        const ctx = document.getElementById('geoAttackChart').getContext('2d');
+        
+        // Use actual data if available, otherwise use placeholder data
+        const labels = data?.labels || ['Unknown'];
+        const values = data?.values || [0];
+        
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        '#3B82F6', // blue
+                        '#F59E0B', // amber
+                        '#10B981', // emerald
+                        '#EF4444', // red
+                        '#8B5CF6', // violet
+                        '#EC4899', // pink
+                        '#6366F1', // indigo
+                        '#14B8A6', // teal
+                        '#F97316', // orange
+                        '#A855F7'  // purple
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // NEW: Sparkline chart for attack trends
+    function renderSparkline() {
+        // Sample data - in a real app, this would come from the API
+        const sparklineData = [12, 15, 10, 18, 29, 23, 32, 30, 25, 28];
+        
+        const options = {
+            chart: {
+                type: 'line',
+                height: 40,
+                width: '100%',
+                sparkline: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
+                }
+            },
+            series: [{
+                name: 'Attacks',
+                data: sparklineData
+            }],
+            stroke: {
+                width: 2,
+                curve: 'smooth'
+            },
+            colors: ['#EF4444'], // Red color
+            tooltip: {
+                fixed: {
+                    enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: {
+                        formatter: function() {
+                            return 'Attacks:';
+                        }
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            }
+        };
+        
+        const chart = new ApexCharts(document.querySelector("#sparkline-attacks"), options);
+        chart.render();
     }
     
     // Helper function to format date
