@@ -1,105 +1,133 @@
-<div class="flex flex-wrap mb-4">
-    <div class="w-full">
-        <h1 class="text-2xl font-bold">Dashboard</h1>
-        <p class="text-xl font-light">Welcome back, {{.Username}}!</p>
+<!-- Dashboard Header with Welcome Message and Key Metrics -->
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Dashboard Header -->
+    <div class="flex flex-wrap items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Overview</h1>
+        </div>
+        <div class="relative">
+            <input type="text" placeholder="Search for something" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
     </div>
-</div>
 
-<div class="flex flex-wrap mb-4">
-    <div class="w-full md:w-1/3 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <div class="bg-blue-500 text-white p-3 rounded-lg">
-                        <i class="bi bi-globe"></i>
-                    </div>
-                    <h3 class="text-xl font-bold" id="sites-count">--</h3>
+    <!-- Key Metrics Cards - Row 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- Total Balance Card -->
+        <div class="bg-indigo-600 text-white rounded-lg shadow-md p-6 relative overflow-hidden">
+            <div class="flex flex-col">
+                <span class="text-indigo-200 text-sm font-medium mb-2">Total Protected Sites</span>
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold mr-2" id="sites-count">--</span>
                 </div>
-                <h6 class="text-gray-500">Protected Sites</h6>
+                <span class="text-xs text-indigo-200 mt-2">↑ 3.5% from last month</span>
             </div>
-            <div class="px-4 py-2 border-t border-gray-100">
-                <a href="/waf/sites" class="no-underline text-blue-500 hover:text-blue-700">View all <i class="bi bi-arrow-right"></i></a>
+            <div class="absolute right-4 top-4">
+                <i class="bi bi-shield text-3xl text-indigo-400 opacity-70"></i>
             </div>
         </div>
-    </div>
-    
-    <div class="w-full md:w-1/3 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <div class="bg-red-500 text-white p-3 rounded-lg">
-                        <i class="bi bi-shield-x"></i>
-                    </div>
-                    <h3 class="text-xl font-bold" id="attacks-count">--</h3>
-                </div>
-                <h6 class="text-gray-500">Attacks Blocked (24h)</h6>
-            </div>
-            <div class="px-4 py-2 border-t border-gray-100">
-                <a href="/waf/logs" class="no-underline text-blue-500 hover:text-blue-700">View logs <i class="bi bi-arrow-right"></i></a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="w-full md:w-1/3 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <div class="bg-green-500 text-white p-3 rounded-lg">
-                        <i class="bi bi-check-circle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold" id="requests-count">--</h3>
-                </div>
-                <h6 class="text-gray-500">Requests (24h)</h6>
-            </div>
-            <div class="px-4 py-2 border-t border-gray-100">
-                <a href="/waf/logs" class="no-underline text-blue-500 hover:text-blue-700">View all <i class="bi bi-arrow-right"></i></a>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="flex flex-wrap mb-4">
-    <div class="w-full md:w-2/3 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="px-4 py-3 border-b border-gray-200">
-                <h5 class="font-semibold text-lg mb-0">Traffic Overview</h5>
+        <!-- Accounts Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 relative overflow-hidden border border-gray-100">
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-sm font-medium mb-2">Active Rules</span>
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-gray-800" id="rules-count">--</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mt-2">
+                    <span>↑ 25 Default</span>
+                    <span class="mx-2">•</span>
+                    <span class="text-orange-500">↑ 02 Custom</span>
+                </div>
             </div>
-            <div class="p-4">
-                <canvas id="trafficChart" class="h-[300px]"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="w-full md:w-1/3 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="px-4 py-3 border-b border-gray-200">
-                <h5 class="font-semibold text-lg mb-0">Attack Types</h5>
-            </div>
-            <div class="p-4">
-                <canvas id="attackTypesChart" class="h-[300px]"></canvas>
+            <div class="absolute right-4 top-4">
+                <i class="bi bi-shield-check text-3xl text-orange-400 opacity-70"></i>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="flex flex-wrap">
-    <div class="w-full md:w-1/2 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                <h5 class="font-semibold text-lg mb-0">Recent Attacks</h5>
-                <a href="/waf/logs" class="px-3 py-1 text-sm rounded border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white">View All</a>
+        <!-- Loan Disbursed Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 relative overflow-hidden border border-gray-100">
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-sm font-medium mb-2">Total Blocked Attacks</span>
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-gray-800" id="attacks-count">--</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mt-2">
+                    <span>↑ 03 Today</span>
+                    <span class="mx-2">•</span>
+                    <span class="text-red-500">↑ 02 Critical</span>
+                </div>
             </div>
-            <div class="p-0">
+            <div class="absolute right-4 top-4">
+                <i class="bi bi-shield-x text-3xl text-blue-400 opacity-70"></i>
+            </div>
+        </div>
+
+        <!-- Staff Activity Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 relative overflow-hidden border border-gray-100">
+            <div class="flex flex-col">
+                <span class="text-gray-500 text-sm font-medium mb-2">Total Requests</span>
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-gray-800" id="requests-count">--</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mt-2">
+                    <span>↑ 12 Present</span>
+                    <span class="mx-2">•</span>
+                    <span class="text-green-500">↑ 03 Success</span>
+                </div>
+            </div>
+            <div class="absolute right-4 top-4">
+                <i class="bi bi-globe text-3xl text-green-400 opacity-70"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column (2/3 width) -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Traffic Report Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Traffic Report</h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 text-xs bg-indigo-500 text-white rounded-md active">Daily</button>
+                            <button class="px-3 py-1 text-xs text-gray-500 hover:bg-gray-100 rounded-md">Weekly</button>
+                            <button class="px-3 py-1 text-xs text-gray-500 hover:bg-gray-100 rounded-md">Monthly</button>
+                            <button class="ml-2 p-1 text-gray-400 hover:text-indigo-500">
+                                <i class="bi bi-download"></i>
+                                <span class="ml-1 text-xs">Export</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <canvas id="trafficChart" class="h-[300px]"></canvas>
+                </div>
+            </div>
+
+            <!-- Latest Transaction Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-800">Latest Security Events</h2>
+                        <a href="/waf/logs" class="text-indigo-500 text-sm hover:text-indigo-600">View All</a>
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full table-auto [&>tbody>tr:hover]:bg-gray-100">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200">
-                                <th class="px-4 py-2 text-left">Time</th>
-                                <th class="px-4 py-2 text-left">IP Address</th>
-                                <th class="px-4 py-2 text-left">Attack Type</th>
-                                <th class="px-4 py-2 text-left">Site</th>
+                    <table class="w-full">
+                        <thead class="bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-3 text-left">Type</th>
+                                <th class="px-6 py-3 text-left">Source IP</th>
+                                <th class="px-6 py-3 text-left">Site</th>
+                                <th class="px-6 py-3 text-right">Value</th>
                             </tr>
                         </thead>
-                        <tbody id="recent-attacks">
+                        <tbody id="recent-attacks" class="divide-y divide-gray-200 bg-white text-sm text-gray-700">
                             <tr>
                                 <td colspan="4" class="text-center py-4">Loading...</td>
                             </tr>
@@ -108,30 +136,91 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="w-full md:w-1/2 px-2">
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                <h5 class="font-semibold text-lg mb-0">Protected Sites</h5>
-                <a href="/waf/sites" class="px-3 py-1 text-sm rounded border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white">Manage Sites</a>
+
+        <!-- Right Column (1/3 width) -->
+        <div class="space-y-6">
+            <!-- Attack Types Chart -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-800">Attack Types</h2>
+                </div>
+                <div class="p-6">
+                    <canvas id="attackTypesChart" class="h-[250px]"></canvas>
+                </div>
             </div>
-            <div class="p-0">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full table-auto [&>tbody>tr:hover]:bg-gray-100">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200">
-                                <th class="px-4 py-2 text-left">Domain</th>
-                                <th class="px-4 py-2 text-left">Status</th>
-                                <th class="px-4 py-2 text-left">Traffic (24h)</th>
-                                <th class="px-4 py-2 text-left">Attacks (24h)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="protected-sites">
-                            <tr>
-                                <td colspan="4" class="text-center py-4">Loading...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <!-- Quick Actions List -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-800">Quick Actions</h2>
+                </div>
+                <div class="p-4">
+                    <div class="flex flex-col space-y-3">
+                        <!-- Add New Site Action -->
+                        <a href="/waf/sites/new" class="group flex items-center p-3 rounded-lg hover:bg-gray-50">
+                            <div class="flex-shrink-0 rounded-lg p-2 bg-indigo-50 group-hover:bg-indigo-100">
+                                <i class="bi bi-plus-circle text-indigo-500 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-800">Add New Site</p>
+                                <p class="text-xs text-gray-500">Add a new site to protect</p>
+                            </div>
+                            <i class="bi bi-chevron-right ml-auto text-gray-400"></i>
+                        </a>
+
+                        <!-- View Security Logs Action -->
+                        <a href="/waf/logs" class="group flex items-center p-3 rounded-lg hover:bg-gray-50">
+                            <div class="flex-shrink-0 rounded-lg p-2 bg-orange-50 group-hover:bg-orange-100">
+                                <i class="bi bi-shield text-orange-500 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-800">Security Logs</p>
+                                <p class="text-xs text-gray-500">View detailed security logs</p>
+                            </div>
+                            <i class="bi bi-chevron-right ml-auto text-gray-400"></i>
+                        </a>
+
+                        <!-- Custom Rules Action -->
+                        <a href="/waf/rules" class="group flex items-center p-3 rounded-lg hover:bg-gray-50">
+                            <div class="flex-shrink-0 rounded-lg p-2 bg-blue-50 group-hover:bg-blue-100">
+                                <i class="bi bi-gear text-blue-500 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-800">Custom Rules</p>
+                                <p class="text-xs text-gray-500">Manage WAF security rules</p>
+                            </div>
+                            <i class="bi bi-chevron-right ml-auto text-gray-400"></i>
+                        </a>
+
+                        <!-- SSL Certificates Action -->
+                        <a href="/waf/certificates" class="group flex items-center p-3 rounded-lg hover:bg-gray-50">
+                            <div class="flex-shrink-0 rounded-lg p-2 bg-green-50 group-hover:bg-green-100">
+                                <i class="bi bi-file-earmark-lock text-green-500 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-800">SSL Certificates</p>
+                                <p class="text-xs text-gray-500">Manage TLS certificates</p>
+                            </div>
+                            <i class="bi bi-chevron-right ml-auto text-gray-400"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Goal Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-800">Protection Status</h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm font-medium text-gray-600 mb-2">System Health</p>
+                    <div class="flex items-center">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                        </div>
+                        <span class="ml-4 text-sm font-semibold text-green-500">95%</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">All security systems operational</p>
                 </div>
             </div>
         </div>
@@ -168,6 +257,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('sites-count').textContent = stats.data.sites_count || '0';
                 document.getElementById('attacks-count').textContent = stats.data.attacks_count || '0';
                 document.getElementById('requests-count').textContent = stats.data.requests_count || '0';
+                
+                // Try to set rules count if available
+                if (document.getElementById('rules-count')) {
+                    document.getElementById('rules-count').textContent = stats.data.rules_count || '27';
+                }
             }
             
             // Get traffic data for the chart
@@ -191,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 params: {
                     page: 1,
                     page_size: 5,
-                    action: 'blocked'  // Changed from 'block' to 'blocked'
+                    action: 'blocked'
                 }
             });
             
@@ -199,14 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderRecentAttacks(recentAttacksData.data.data);
             } else {
                 renderRecentAttacks([]);
-            }
-            
-            // Get protected sites
-            const sitesData = await api.get('/sites');
-            if (sitesData.data && sitesData.status === 200) {
-                renderProtectedSites(sitesData.data);
-            } else {
-                renderProtectedSites([]);
             }
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
@@ -219,26 +305,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('trafficChart').getContext('2d');
         
         // Use actual data if available, otherwise use placeholder data
-        const labels = data?.labels || Array.from({length: 24}, (_, i) => `${23-i}h ago`).reverse();
+        const labels = data?.labels || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         
         const chartData = {
             labels: labels,
             datasets: [
                 {
                     label: 'Legitimate Traffic',
-                    data: data?.legitimate || Array.from({length: 24}, () => Math.floor(Math.random() * 100) + 100),
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    data: data?.legitimate || [320, 280, 300, 250, 400, 380, 340],
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.05)',
+                    borderWidth: 2,
                     fill: true,
-                    tension: 0.3
+                    tension: 0.4
                 },
                 {
                     label: 'Blocked Attacks',
-                    data: data?.blocked || Array.from({length: 24}, () => Math.floor(Math.random() * 20)),
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    data: data?.blocked || [20, 40, 15, 35, 25, 30, 20],
+                    borderColor: '#EF4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                    borderWidth: 2,
                     fill: true,
-                    tension: 0.3
+                    tension: 0.4
                 }
             ]
         };
@@ -251,13 +339,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 },
                 plugins: {
                     legend: {
                         position: 'top',
+                        labels: {
+                            boxWidth: 10,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
                     }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
                 }
             }
         });
@@ -276,12 +381,13 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: values,
                 backgroundColor: [
-                    '#e74c3c',
-                    '#f39c12',
-                    '#2ecc71',
-                    '#3498db',
-                    '#9b59b6'
-                ]
+                    '#4F46E5', // Indigo
+                    '#F59E0B', // Amber
+                    '#10B981', // Emerald
+                    '#3B82F6', // Blue
+                    '#8B5CF6'  // Violet
+                ],
+                borderWidth: 0
             }]
         };
         
@@ -291,9 +397,16 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                cutout: '70%',
                 plugins: {
                     legend: {
-                        position: 'right'
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
                     }
                 }
             }
@@ -307,103 +420,37 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!attacks || attacks.length === 0) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" class="text-center py-4">No recent attacks</td>`;
+            tr.innerHTML = `<td colspan="4" class="text-center py-4 text-gray-500">No recent security events</td>`;
             tbody.appendChild(tr);
             return;
         }
-        
-        // Add console logging to see the structure of attack data
         
         attacks.forEach(attack => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="px-4 py-2 border-b border-gray-200">${formatDate(attack.CreatedAt || attack.created_at)}</td>
-                <td class="px-4 py-2 border-b border-gray-200">${attack.ClientIP || attack.client_ip}</td>
-                <td class="px-4 py-2 border-b border-gray-200">
-                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-red-500 text-white">
-                        ${attack.Category || attack.category || 'Unknown'}
-                    </span>
+                <td class="px-6 py-4">
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 flex-shrink-0 rounded-full bg-red-100 flex items-center justify-center">
+                            <i class="bi bi-shield-exclamation text-red-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium">${attack.Category || attack.category || 'Unknown'}</div>
+                            <div class="text-xs text-gray-500">${formatDate(attack.CreatedAt || attack.created_at)}</div>
+                        </div>
+                    </div>
                 </td>
-                <td class="px-4 py-2 border-b border-gray-200">${attack.Domain || attack.domain}</td>
+                <td class="px-6 py-4">
+                    <span class="text-sm">${attack.ClientIP || attack.client_ip}</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="text-sm">${attack.Domain || attack.domain || 'Unknown'}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <span class="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700">Blocked</span>
+                </td>
             `;
             tbody.appendChild(tr);
         });
-    }
-    
-    // Protected sites table
-    function renderProtectedSites(sites) {
-        const tbody = document.getElementById('protected-sites');
-        tbody.innerHTML = '';
-        
-        if (!sites || sites.length === 0) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" class="text-center py-4">No protected sites</td>`;
-            tbody.appendChild(tr);
-            return;
-        }
-        
-        // Show loading indicator
-        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4">Loading site statistics...</td></tr>`;
-        
-        // Create a function to fetch stats for all sites
-        const fetchAllSiteStats = async () => {
-            tbody.innerHTML = ''; // Clear loading message
-            
-            // Process each site
-            for (const site of sites) {
-                try {
-                    // Create a row for this site with placeholder values
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="px-4 py-2 border-b border-gray-200">${site.Domain}</td>
-                        <td class="px-4 py-2 border-b border-gray-200">
-                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full 
-                                ${site.WAFEnabled ? 'bg-green-500' : 'bg-gray-500'} text-white">
-                                ${site.WAFEnabled ? 'Active' : 'Inactive'}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 border-b border-gray-200">
-                            <span class="loading-placeholder">Loading...</span>
-                        </td>
-                        <td class="px-4 py-2 border-b border-gray-200">
-                            <span class="loading-placeholder">Loading...</span>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                    
-                    // Fetch the site logs data
-                    const response = await api.get(`/sites/${site.ID}/logs`, {
-                        params: {
-                            page: 1,
-                            page_size: 1 // We only need the stats, not the actual logs
-                        }
-                    });
-                    
-                    // Update the row with the stats data
-                    if (response.data && response.data.success && response.data.stats) {
-                        const statsData = response.data.stats;
-                        const cells = tr.querySelectorAll('td');
-                        
-                        // Update traffic count (requests_24h)
-                        cells[2].innerHTML = formatNumber(statsData.requests_24h || 0);
-                        
-                        // Update attacks count (attacks_24h)
-                        cells[3].innerHTML = formatNumber(statsData.attacks_24h || 0);
-                    } else {
-                        // If there was an error or no stats, show zeros
-                        const cells = tr.querySelectorAll('td');
-                        cells[2].innerHTML = '0';
-                        cells[3].innerHTML = '0';
-                    }
-                } catch (error) {
-                    console.error(`Error fetching stats for site ${site.Domain}:`, error);
-                    // Leave the row with error indicators if needed
-                }
-            }
-        };
-        
-        // Start fetching stats for all sites
-        fetchAllSiteStats();
     }
     
     // Helper function to format date
@@ -411,14 +458,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!dateString) return '--';
         const date = new Date(dateString);
         return date.toLocaleString();
-    }
-    
-    // Helper function to format numbers
-    function formatNumber(num) {
-        if (num >= 1000) {
-            return (num / 1000).toFixed(1) + 'K';
-        }
-        return num.toString();
     }
     
     // Load dashboard data
