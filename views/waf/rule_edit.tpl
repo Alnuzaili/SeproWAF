@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await axios.get('/api/waf/templates', {
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token')
+                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
                 }
             });
             
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await axios.get(`/api/waf/rules/${ruleId}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token')
+                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
                 }
             });
             
@@ -602,7 +602,7 @@ SecRule IP:login_counter "@gt 5" "id:10004,phase:1,deny,status:429,log,msg:'Logi
             
             const response = await axios.post('/api/waf/test-rule', ruleData, {
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token'),
+                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
                     'Content-Type': 'application/json'
                 }
             });
@@ -629,7 +629,7 @@ SecRule IP:login_counter "@gt 5" "id:10004,phase:1,deny,status:429,log,msg:'Logi
             
             const response = await axios.post('/api/waf/test-rule', ruleData, {
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token'),
+                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
                     'Content-Type': 'application/json'
                 }
             });
@@ -675,7 +675,7 @@ SecRule IP:login_counter "@gt 5" "id:10004,phase:1,deny,status:429,log,msg:'Logi
                 url: url,
                 data: ruleData,
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token'),
+                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token'),
                     'Content-Type': 'application/json'
                 }
             });

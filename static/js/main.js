@@ -1,8 +1,8 @@
 // Main JavaScript file for SeproWAF UI
 
 // Token management
-const TOKEN_KEY = 'sepro_waf_token';
-const USER_DATA = 'sepro_waf_user';
+const TOKEN_KEY = 'auth_token';
+const USER_DATA = 'user_data';
 
 // Get auth token
 function getToken() {

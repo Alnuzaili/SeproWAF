@@ -134,7 +134,7 @@ async function loadRules() {
         
         const response = await axios.get('/api/sites/{{.SiteID}}/waf/rules', {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token')
+                'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
             }
         });
         
@@ -253,7 +253,7 @@ async function toggleRule(ruleId, currentStatus) {
     try {
         await axios.post(`/api/waf/rules/${ruleId}/toggle`, {}, {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token')
+                'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
             }
         });
         
@@ -270,7 +270,7 @@ async function deleteRule(ruleId) {
     try {
         await axios.delete(`/api/waf/rules/${ruleId}`, {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('sepro_waf_token')
+                'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
             }
         });
         
