@@ -143,6 +143,7 @@ func (c *UIController) SiteDetail() {
 	// Add data to template
 	c.Data["PageTitle"] = site.Name
 	c.Data["Site"] = site
+	c.Data["IsAuthenticated"] = true
 	c.Data["ActiveTab"] = activeTab // Set the active tab
 	c.Data["ProxyPort"] = ProxyPort
 	c.Layout = "layout.tpl"
@@ -264,6 +265,7 @@ func (c *UIController) WAFRuleList() {
 
 	c.Data["Site"] = site
 	c.Data["SiteID"] = siteID
+	c.Data["IsAuthenticated"] = true
 	c.Data["PageTitle"] = "WAF Rules - " + site.Domain
 	c.Layout = "layout.tpl"
 	c.TplName = "waf/rule_list.tpl"
@@ -293,6 +295,7 @@ func (c *UIController) WAFRuleCreate() {
 
 	c.Data["Site"] = site
 	c.Data["SiteID"] = siteID
+	c.Data["IsAuthenticated"] = true
 	c.Data["IsEdit"] = false
 	c.Data["PageTitle"] = "Create WAF Rule - " + site.Domain
 	c.Layout = "layout.tpl"
@@ -342,6 +345,7 @@ func (c *UIController) WAFRuleEdit() {
 		return
 	}
 
+	c.Data["IsAuthenticated"] = true
 	c.Data["Site"] = site
 	c.Data["SiteID"] = siteID
 	c.Data["Rule"] = rule
@@ -362,6 +366,7 @@ func (c *UIController) WAFLogsList() {
 
 	c.Data["Title"] = "WAF Security Logs"
 	c.Data["ActiveMenu"] = "waf_logs"
+	c.Data["IsAuthenticated"] = true
 	c.Layout = "layout.tpl"
 	c.TplName = "waf/logs_list.tpl"
 }
@@ -386,6 +391,7 @@ func (c *UIController) WAFLogDetail() {
 	}
 
 	c.Data["LogID"] = id
+	c.Data["IsAuthenticated"] = true
 	c.Layout = "layout.tpl"
 	c.TplName = "waf/log_detail.tpl"
 }
@@ -466,6 +472,7 @@ func (c *UIController) GlobalRules() {
 	c.Data["Sites"] = sites
 	c.Data["RuleCounts"] = siteRuleCounts
 	c.Data["PageTitle"] = "Global WAF Rules"
+	c.Data["IsAuthenticated"] = true
 	c.Layout = "layout.tpl"
 	c.TplName = "waf/global_rules.tpl"
 }
@@ -621,6 +628,7 @@ func (c *UIController) Settings() {
 		return
 	}
 	c.Data["Title"] = "Settings"
+	c.Data["IsAuthenticated"] = true
 	c.Layout = "layout.tpl"
 	c.TplName = "settings/settings.tpl"
 }

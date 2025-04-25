@@ -12,7 +12,7 @@
                 <h5 class="text-lg font-semibold mb-0">Certificate Information</h5>
             </div>
             <div class="p-4">
-                <form id="upload-certificate-form">
+                <form id="upload-certificate-form" method="POST" enctype="multipart/form-data">
                     <div class="mb-5">
                         <label for="certificate-name" class="block text-sm font-medium text-gray-700 mb-1">
                             Certificate Name <span class="text-red-500">*</span>
@@ -32,48 +32,110 @@
                         <div class="mt-1 text-sm text-gray-500">A friendly name to identify this certificate</div>
                     </div>
                     
+                    <!-- Certificate Section with Tab Interface -->
                     <div class="mb-5">
-                        <label for="certificate-content" class="block text-sm font-medium text-gray-700 mb-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
                             SSL Certificate (PEM Format) <span class="text-red-500">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute top-2 left-0 pl-3 flex items-start pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                            </div>
-                            <textarea id="certificate-content" name="certificate-content" 
-                                placeholder="-----BEGIN CERTIFICATE-----
+                        
+                        <!-- Tab Navigation -->
+                        <div class="flex border-b border-gray-200 mb-3">
+                            <button type="button" class="certificate-tab py-2 px-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600" data-target="certificate-text-tab">
+                                Enter Manually
+                            </button>
+                            <button type="button" class="certificate-tab py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="certificate-file-tab">
+                                Upload File
+                            </button>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div id="certificate-text-tab" class="certificate-tab-content">
+                            <div class="relative">
+                                <div class="absolute top-2 left-0 pl-3 flex items-start pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </div>
+                                <textarea id="certificate-content" name="certificate-content" 
+                                    placeholder="-----BEGIN CERTIFICATE-----
 MIIDTTCCAjWgAwIBAgIJANVz6kIyTGOEMA0GCSqGSIb3DQEBCwUAMD0xCzAJBgNV
 ...
 -----END CERTIFICATE-----"
-                                class="pl-10 pr-3 py-2 mt-1 block w-full rounded-md border-gray-300 bg-gray-50 
-                                text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                                focus:ring-opacity-30 focus:outline-none transition duration-200 ease-in-out
-                                hover:bg-gray-100 font-mono text-sm" rows="8" required></textarea>
+                                    class="pl-10 pr-3 py-2 mt-1 block w-full rounded-md border-gray-300 bg-gray-50 
+                                    text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
+                                    focus:ring-opacity-30 focus:outline-none transition duration-200 ease-in-out
+                                    hover:bg-gray-100 font-mono text-sm" rows="8" required></textarea>
+                            </div>
+                        </div>
+                        <div id="certificate-file-tab" class="certificate-tab-content hidden">
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="mt-4 flex text-sm text-gray-600">
+                                    <label for="certificate-file" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                        <span>Upload certificate file</span>
+                                        <input id="certificate-file" name="certificate-file" type="file" class="sr-only" accept=".pem,.crt,.cer">
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">PEM, CRT, or CER file up to 2MB</p>
+                                <div id="certificate-file-name" class="mt-2 text-sm text-gray-800 font-medium hidden"></div>
+                            </div>
                         </div>
                         <div class="mt-1 text-sm text-gray-500">Paste your certificate in PEM format (including BEGIN/END CERTIFICATE headers)</div>
                     </div>
                     
+                    <!-- Private Key Section with Tab Interface -->
                     <div class="mb-5">
-                        <label for="private-key" class="block text-sm font-medium text-gray-700 mb-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
                             Private Key (PEM Format) <span class="text-red-500">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute top-2 left-0 pl-3 flex items-start pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                </svg>
-                            </div>
-                            <textarea id="private-key" name="private-key"
-                                placeholder="-----BEGIN PRIVATE KEY-----
+                        
+                        <!-- Tab Navigation -->
+                        <div class="flex border-b border-gray-200 mb-3">
+                            <button type="button" class="key-tab py-2 px-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600" data-target="key-text-tab">
+                                Enter Manually
+                            </button>
+                            <button type="button" class="key-tab py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="key-file-tab">
+                                Upload File
+                            </button>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div id="key-text-tab" class="key-tab-content">
+                            <div class="relative">
+                                <div class="absolute top-2 left-0 pl-3 flex items-start pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                    </svg>
+                                </div>
+                                <textarea id="private-key" name="private-key"
+                                    placeholder="-----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBj08sp5++4anG
 ...
 -----END PRIVATE KEY-----"
-                                class="pl-10 pr-3 py-2 mt-1 block w-full rounded-md border-gray-300 bg-gray-50 
-                                text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                                focus:ring-opacity-30 focus:outline-none transition duration-200 ease-in-out
-                                hover:bg-gray-100 font-mono text-sm" rows="8" required></textarea>
+                                    class="pl-10 pr-3 py-2 mt-1 block w-full rounded-md border-gray-300 bg-gray-50 
+                                    text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
+                                    focus:ring-opacity-30 focus:outline-none transition duration-200 ease-in-out
+                                    hover:bg-gray-100 font-mono text-sm" rows="8" required></textarea>
+                            </div>
+                        </div>
+                        <div id="key-file-tab" class="key-tab-content hidden">
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="mt-4 flex text-sm text-gray-600">
+                                    <label for="private-key-file" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                        <span>Upload key file</span>
+                                        <input id="private-key-file" name="private-key-file" type="file" class="sr-only" accept=".pem,.key">
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">PEM or KEY file up to 2MB</p>
+                                <div id="key-file-name" class="mt-2 text-sm text-gray-800 font-medium hidden"></div>
+                            </div>
                         </div>
                         <div class="mt-1 text-sm text-gray-500">Paste your private key in PEM format (including BEGIN/END PRIVATE KEY headers)</div>
                     </div>
@@ -165,12 +227,180 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadForm = document.getElementById('upload-certificate-form');
     const errorElement = document.getElementById('upload-error');
     
+    // Tab switching for certificate
+    document.querySelectorAll('.certificate-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Update active tab style
+            document.querySelectorAll('.certificate-tab').forEach(t => {
+                t.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                t.classList.add('text-gray-500');
+            });
+            this.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            this.classList.remove('text-gray-500');
+            
+            // Show correct tab content
+            document.querySelectorAll('.certificate-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(this.dataset.target).classList.remove('hidden');
+        });
+    });
+    
+    // Tab switching for private key
+    document.querySelectorAll('.key-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Update active tab style
+            document.querySelectorAll('.key-tab').forEach(t => {
+                t.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                t.classList.add('text-gray-500');
+            });
+            this.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            this.classList.remove('text-gray-500');
+            
+            // Show correct tab content
+            document.querySelectorAll('.key-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(this.dataset.target).classList.remove('hidden');
+        });
+    });
+    
+    // Handle certificate file upload
+    document.getElementById('certificate-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Display filename
+            const fileNameEl = document.getElementById('certificate-file-name');
+            fileNameEl.textContent = file.name;
+            fileNameEl.classList.remove('hidden');
+            
+            // Read file contents
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('certificate-content').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+    });
+    
+    // Handle private key file upload
+    document.getElementById('private-key-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Display filename
+            const fileNameEl = document.getElementById('key-file-name');
+            fileNameEl.textContent = file.name;
+            fileNameEl.classList.remove('hidden');
+            
+            // Read file contents
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('private-key').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+    });
+    
+    // Add drag and drop support for certificate
+    const certDropZone = document.getElementById('certificate-file-tab').querySelector('.border-dashed');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        certDropZone.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        certDropZone.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        certDropZone.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        certDropZone.classList.add('bg-blue-50', 'border-blue-300');
+    }
+    
+    function unhighlight() {
+        certDropZone.classList.remove('bg-blue-50', 'border-blue-300');
+    }
+    
+    certDropZone.addEventListener('drop', handleCertDrop, false);
+    
+    function handleCertDrop(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        
+        if (file) {
+            document.getElementById('certificate-file').files = dt.files;
+            
+            // Display filename
+            const fileNameEl = document.getElementById('certificate-file-name');
+            fileNameEl.textContent = file.name;
+            fileNameEl.classList.remove('hidden');
+            
+            // Read file contents
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('certificate-content').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+    }
+    
+    // Add drag and drop support for private key
+    const keyDropZone = document.getElementById('key-file-tab').querySelector('.border-dashed');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        keyDropZone.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        keyDropZone.addEventListener(eventName, function() {
+            keyDropZone.classList.add('bg-blue-50', 'border-blue-300');
+        }, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        keyDropZone.addEventListener(eventName, function() {
+            keyDropZone.classList.remove('bg-blue-50', 'border-blue-300');
+        }, false);
+    });
+    
+    keyDropZone.addEventListener('drop', function(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        
+        if (file) {
+            document.getElementById('private-key-file').files = dt.files;
+            
+            // Display filename
+            const fileNameEl = document.getElementById('key-file-name');
+            fileNameEl.textContent = file.name;
+            fileNameEl.classList.remove('hidden');
+            
+            // Read file contents
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('private-key').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+    }, false);
+    
+    // Form submission - handle both text input and file uploads
     uploadForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const name = document.getElementById('certificate-name').value;
         const certificate = document.getElementById('certificate-content').value;
         const privateKey = document.getElementById('private-key').value;
+        
+        errorElement.classList.add('hidden');
         
         // Basic validation
         if (!name || !certificate || !privateKey) {
@@ -229,5 +459,10 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Custom focus for textareas */
 textarea:focus {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Drag and drop styling */
+.border-dashed {
+    transition: all 0.2s ease;
 }
 </style>

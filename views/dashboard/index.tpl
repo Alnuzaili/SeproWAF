@@ -1,5 +1,5 @@
 <!-- Dashboard Header with Welcome Message and Key Metrics -->
-<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="w-full">
     <!-- Dashboard Header -->
     <div class="flex flex-wrap items-center justify-between mb-8">
         <div>

@@ -299,20 +299,31 @@
             </div>
         </nav>
 
-        <!-- Main content for authenticated pages -->
-        <main class="auth-required hidden flex-grow">
-            <!-- Added padding to account for fixed navbar -->
-            <div class="pt-16 min-h-screen w-full transition-all duration-300 content-scrollable" id="main-content">
-                <!-- Left padding for desktop with sidebar, responsive for mobile -->
-                <div class="px-4 py-6 md:px-6 lg:px-8 lg:pl-72">
-                    {{.LayoutContent}}
+        <!-- Single content container with conditional rendering -->
+        <div id="main-content-wrapper" class="flex-grow">
+            {{if .IsAuthenticated}}
+            <!-- Content for authenticated pages -->
+            <main class="flex-grow">
+                <!-- Added padding to account for fixed navbar -->
+                <div class="pt-16 min-h-screen w-full transition-all duration-300 content-scrollable" id="main-content">
+                    <!-- Left padding for desktop with sidebar, responsive for mobile -->
+                    <div class="px-4 py-6 md:px-6 lg:px-8 lg:pl-72">
+                        {{.LayoutContent}}
+                    </div>
                 </div>
-            </div>
-        </main>
-        
-        <!-- Main content for non-authenticated pages -->
-        <div class="auth-not-required w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow content-scrollable">
-            {{.LayoutContent}}
+            </main>
+            {{else}}
+            <!-- Content for non-authenticated pages -->
+            <main class="flex-grow">
+                <!-- No top padding needed since navbar isn't fixed for non-auth pages -->
+                <div class="min-h-screen w-full transition-all duration-300 content-scrollable" id="main-content-non-auth">
+                    <!-- Centered content with max width, no sidebar padding needed -->
+                    <div class="px-4 py-6 md:px-6 lg:px-8 max-w-8xl mx-auto">
+                        {{.LayoutContent}}
+                    </div>
+                </div>
+            </main>
+            {{end}}
         </div>
 
         <!-- Footer for non-auth pages -->
@@ -332,7 +343,6 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/static/js/main.js"></script>
-    {{.JS}}
     <script>
     // Mobile menu toggle
     document.getElementById('mobile-menu-button')?.addEventListener('click', function() {

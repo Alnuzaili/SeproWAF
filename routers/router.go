@@ -16,6 +16,7 @@ func init() {
 	web.Router("/dashboard", &controllers.UIController{}, "get:Dashboard")
 	web.Router("/user/profile", &controllers.UIController{}, "get:UserProfile")
 	web.Router("/admin/users", &controllers.UIController{}, "get:UserList")
+	web.Router("/admin/settings", &controllers.UIController{}, "get:Settings")
 
 	// UI Routes for Site Management (now part of UIController)
 	web.Router("/waf/sites", &controllers.UIController{}, "get:SiteList")
