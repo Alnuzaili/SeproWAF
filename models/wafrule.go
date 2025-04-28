@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	RuleStatusActive   = 1 // Define the active status constant
-	RuleStatusInactive = 0 // Optionally define an inactive status constant
+	RuleStatusActive   = "enabled"  // Define the active status constant
+	RuleStatusInactive = "disabled" // Optionally define an inactive status constant
 )
 
 func init() {
