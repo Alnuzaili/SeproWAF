@@ -508,7 +508,7 @@ func (ps *ProxyServer) updateRequestCounters() {
 
 		// Check if site table exists before attempting update
 		tableExists := false
-		err := o.Raw("SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'site'").QueryRow(&tableExists)
+		err := o.Raw("SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'sites'").QueryRow(&tableExists)
 		if err != nil || !tableExists {
 			// Log once instead of spamming logs
 			logs.Warning("Site table doesn't exist in database, disabling request count updates")
@@ -528,7 +528,7 @@ func (ps *ProxyServer) updateRequestCounters() {
 
 		success := true
 		for siteID, count := range counters {
-			_, err := tx.Raw("UPDATE site SET request_count = request_count + ? WHERE id = ?", count, siteID).Exec()
+			_, err := tx.Raw("UPDATE sites SET request_count = request_count + ? WHERE i_d = ?", count, siteID).Exec()
 			if err != nil {
 				logs.Error("Failed to update request count for site %d: %v", siteID, err)
 				success = false
