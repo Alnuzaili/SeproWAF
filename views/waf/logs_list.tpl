@@ -8,13 +8,17 @@
             <button type="button" class="px-3 py-2 text-sm font-medium border border-gray-400 text-gray-700 bg-gray-100 rounded-l-md active" data-range="24h">24 Hours</button>
             <button type="button" class="px-3 py-2 text-sm font-medium border-t border-b border-gray-400 text-gray-700 bg-white" data-range="7d">7 Days</button>
             <button type="button" class="px-3 py-2 text-sm font-medium border border-gray-400 text-gray-700 bg-white rounded-r-md" data-range="30d">30 Days</button>
+               <button id="summarizeLogsBtn" class="ms-2 px-3 py-2 text-sm font-medium bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 rounded shadow-sm transition duration-200 flex items-center">
+            <span class="flex items-center justify-center bg-white rounded-full w-5 h-5 mr-2">
+                <i class="fas fa-robot text-green-600 text-xs"></i>
+            </span>
+            Analyze with AI
+        </button>
         </div>
         <button id="refreshBtn" class="ml-2 px-3 py-2 text-sm font-medium border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white rounded">
             <i class="bi bi-arrow-clockwise"></i> Refresh
         </button>
-        <button id="summarizeLogsBtn" class="ml-2 px-3 py-2 text-sm font-medium border border-green-600 text-green-600 hover:bg-green-600 hover:text-white rounded">
-            <i class="fas fa-robot"></i> Summarize with AI
-        </button>
+
     </div>
 </div>
 
@@ -218,46 +222,79 @@
 </div>
 
 <!-- AI Summary Modal -->
-<div id="summaryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden overflow-y-auto py-4">
-    <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 overflow-hidden flex flex-col max-h-[90vh]"> 
-        <div class="px-4 py-3 border-b flex justify-between items-center flex-shrink-0">
-            <h5 class="text-lg font-medium">AI Security Log Summary</h5>
-            <button id="closeSummaryModal" class="text-gray-500 hover:text-gray-800">
+<div id="summaryModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden overflow-y-auto py-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 overflow-hidden flex flex-col max-h-[90vh] border border-gray-200 animate-fadeIn"> 
+        <div class="px-6 py-4 border-b flex justify-between items-center flex-shrink-0 bg-gradient-to-r from-gray-900 to-gray-800 text-white">
+            <div class="flex items-center">
+                <div class="bg-gradient-to-r from-green-500 to-green-400 p-2 rounded-full mr-3 shadow-lg">
+                    <i class="fas fa-robot text-white text-xl"></i>
+                </div>
+                <div>
+                    <h5 class="text-xl font-medium">AI Security Intelligence</h5>
+                    <p class="text-xs text-gray-300 mt-1">Comprehensive threat analysis • <span id="reportDate"></span></p>
+                </div>
+            </div>
+            <button id="closeSummaryModal" class="text-gray-300 hover:text-white p-1.5 rounded-full hover:bg-gray-700 transition-all duration-200">
                 <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
-        <div class="px-4 py-5 overflow-y-auto" style="max-height: calc(90vh - 120px);">
-            <div id="summaryLoading" class="text-center py-4">
-                <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" role="status">
-                    <span class="sr-only">Loading...</span>
+        <div class="px-6 py-5 overflow-y-auto bg-gray-50" style="max-height: calc(90vh - 140px);">
+            <div id="summaryLoading" class="text-center py-12">
+                <div class="w-28 h-28 mb-4 mx-auto relative">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-green-600 text-3xl animate-pulse"></i>
+                    </div>
+                    <div class="h-28 w-28 rounded-full border-4 border-green-500 border-opacity-30 border-t-green-500 animate-spin"></div>
                 </div>
-                <p class="mt-2">Generating AI analysis of security logs...</p>
-                <p class="text-sm text-gray-500 mt-1">This may take up to 30 seconds</p>
+                <p class="mt-6 text-xl font-medium text-gray-800">Analyzing Security Events</p>
+                <p class="text-sm text-gray-500 mt-2">AI is processing events and identifying potential threats</p>
+                <div class="mt-6 w-full max-w-md mx-auto h-2.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="loadingProgressBar" class="h-full bg-gradient-to-r from-green-500 via-green-400 to-green-500 transition-all duration-1000 bg-[length:200%_100%] animate-gradientFlow" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">This typically takes 10-15 seconds</p>
             </div>
-            <div id="summaryContent" class="hidden">
-                <h6 class="font-bold mb-3">Key Security Insights:</h6>
-                <div id="summaryText" class="p-3 bg-gray-100 rounded whitespace-pre-wrap"></div>
+            <div id="summaryContent" class="hidden prose prose-lg max-w-none">
+                <!-- Content will be rendered here by marked.js -->
             </div>
-            <div id="summaryError" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 hidden">
-                <p class="font-bold" id="summaryErrorTitle">Error</p>
-                <p id="summaryErrorMessage">Failed to generate summary. Please try again later.</p>
-                <div class="mt-3">
-                    <button id="retrySummary" class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700">
-                        Try Again
-                    </button>
+            <div id="summaryError" class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg shadow-sm hidden">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-lg font-medium" id="summaryErrorTitle">Error</p>
+                        <p class="text-sm mt-1" id="summaryErrorMessage">Failed to generate summary. Please try again later.</p>
+                        <div class="mt-4">
+                            <button id="retrySummary" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-sm transition duration-150 ease-in-out flex items-center">
+                                <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="px-4 py-3 border-t flex justify-end flex-shrink-0">
-            <button id="closeSummaryButton" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded">
-                Close
-            </button>
+        <div class="px-6 py-4 border-t bg-gray-100 flex justify-between items-center flex-shrink-0">
+
+            <div class="flex space-x-3">
+                <button id="downloadReport" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-md shadow-sm transition duration-150 ease-in-out hidden flex items-center">
+                    <i class="fas fa-file-download mr-1.5"></i> Download Report
+                </button>
+                <button id="closeSummaryButton" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md shadow-sm transition duration-150 ease-in-out">
+                    Close
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Variables for pagination
@@ -336,9 +373,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Configure marked.js options for security and rendering
+    marked.setOptions({
+        renderer: new marked.Renderer(),
+        highlight: function(code, lang) {
+            return code;
+        },
+        pedantic: false,
+        gfm: true,
+        breaks: true,
+        sanitize: false,
+        smartypants: false,
+        xhtml: false
+    });
+
     // Summarize logs button
     document.getElementById('summarizeLogsBtn').addEventListener('click', function() {
-        console.log("Summarize button clicked");
         fetchSummary();
     });
 
@@ -349,6 +399,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('closeSummaryButton').addEventListener('click', function() {
         document.getElementById('summaryModal').classList.add('hidden');
+    });
+
+    // Download report button
+    document.getElementById('downloadReport').addEventListener('click', function() {
+        downloadSummaryReport();
     });
 
     // Retry button
@@ -372,6 +427,17 @@ document.addEventListener('DOMContentLoaded', function() {
             params.append('end_date', formData.get('end_date'));
         }
         
+        // Set report date with proper formatting
+        const now = new Date();
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        document.getElementById('reportDate').textContent = now.toLocaleDateString(undefined, options);
+        
         // Show the modal
         document.getElementById('summaryModal').classList.remove('hidden');
         
@@ -379,10 +445,26 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('summaryLoading').classList.remove('hidden');
         document.getElementById('summaryContent').classList.add('hidden');
         document.getElementById('summaryError').classList.add('hidden');
+        document.getElementById('downloadReport').classList.add('hidden');
+        
+        // Animate loading progress bar
+        const progressBar = document.getElementById('loadingProgressBar');
+        progressBar.style.width = '0%';
+        
+        // Simulate progress animation
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 2;
+            if (progress > 95) {
+                clearInterval(progressInterval);
+                return;
+            }
+            progressBar.style.width = progress + '%';
+        }, 300);
         
         // Set a timeout in case the API call takes too long
         const timeoutId = setTimeout(() => {
-            console.log("Local timeout triggered after waiting");
+            clearInterval(progressInterval);
             document.getElementById('summaryLoading').classList.add('hidden');
             document.getElementById('summaryError').classList.remove('hidden');
             document.getElementById('summaryErrorTitle').textContent = "Request taking too long";
@@ -391,31 +473,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 35000); // 35 seconds local timeout as a fallback
         
         // Call the API to get summary
-        console.log("Calling API: /api/waf/logs/summary");
         api.get('/waf/logs/summary', { params: Object.fromEntries(params) })
             .then(response => {
-                // Clear the timeout since we got a response
+                // Clear the timeout and progress interval
                 clearTimeout(timeoutId);
+                clearInterval(progressInterval);
                 
-                console.log("API response received:", response.data);
+                // Complete the progress bar
+                progressBar.style.width = '100%';
                 
                 if (response.data && response.data.success && response.data.summary) {
-                    // Format and display the summary
-                    const summaryText = formatSecuritySummary(response.data.summary);
-                    document.getElementById('summaryText').innerHTML = summaryText;
+                    // Render the summary as markdown
+                    const renderedHtml = marked.parse(response.data.summary);
                     
-                    // Hide loading, show content
-                    document.getElementById('summaryLoading').classList.add('hidden');
-                    document.getElementById('summaryContent').classList.remove('hidden');
+                    // Apply custom styles to the HTML content
+                    const styledHtml = applyCustomStylesToReport(renderedHtml);
+                    
+                    // Insert the HTML into the content div
+                    document.getElementById('summaryContent').innerHTML = styledHtml;
+                    
+                    // Store original markdown for download
+                    document.getElementById('summaryContent').dataset.markdown = response.data.summary;
+                    
+                    // Hide loading, show content after a brief delay to complete animation
+                    setTimeout(() => {
+                        document.getElementById('summaryLoading').classList.add('hidden');
+                        document.getElementById('summaryContent').classList.remove('hidden');
+                        document.getElementById('downloadReport').classList.remove('hidden');
+                    }, 500);
                 } else {
                     throw new Error('Invalid response format or empty summary');
                 }
             })
             .catch(error => {
-                // Clear the timeout since we got a response (even if it's an error)
+                // Clear the timeout and progress interval
                 clearTimeout(timeoutId);
-                
-                console.error('Error fetching summary:', error);
+                clearInterval(progressInterval);
                 
                 // Hide loading, show error
                 document.getElementById('summaryLoading').classList.add('hidden');
@@ -439,19 +532,135 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Format security summary with highlighting
-    function formatSecuritySummary(text) {
-        if (!text) return '';
+    // Apply custom styles to the rendered HTML report
+    function applyCustomStylesToReport(html) {
+        // Add custom classes and styling to the HTML
+        let styledHtml = html;
         
-        return text
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n/g, '<br>')
-            .replace(/(CRITICAL|HIGH|MEDIUM|WARNING|ALERT|Attack[s]?|suspicious activity|anomaly|anomalies|injection|XSS|SQL)/gi, 
-                '<span class="font-bold text-red-600">$1</span>')
-            .replace(/(blocked|rejected|prevented|protected|secure)/gi, 
-                '<span class="font-bold text-green-600">$1</span>')
-            .replace(/(recommendation|should|must|advised|recommend)/gi, 
-                '<span class="font-bold text-blue-600">$1</span>');
+        // Add card container for the whole report
+        styledHtml = `<div class="bg-white p-4 shadow-sm rounded-lg border border-gray-200 overflow-hidden">${styledHtml}</div>`;
+        
+        // Style section headers (look for h1, h2, h3 or markdown # style headers)
+        styledHtml = styledHtml.replace(/<h1>(.*?)<\/h1>/g, 
+            '<h1 class="text-2xl font-bold mt-6 mb-4 text-gray-800 border-b pb-2">$1</h1>');
+        styledHtml = styledHtml.replace(/<h2>(.*?)<\/h2>/g, 
+            '<h2 class="text-xl font-bold mt-5 mb-3 text-gray-800">$1</h2>');
+        styledHtml = styledHtml.replace(/<h3>(.*?)<\/h3>/g, 
+            '<h3 class="text-lg font-bold mt-4 mb-2 text-gray-800">$1</h3>');
+        
+        // Style specific sections
+        styledHtml = styledHtml.replace(/<h[1-3]>(EXECUTIVE SUMMARY|Executive Summary)(.*)(<\/h[1-3]>)/g, 
+            '<div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-4 flex items-center">' +
+            '<div class="rounded-full bg-white p-2 mr-3"><i class="fas fa-chart-line text-blue-700 text-xl"></i></div>' +
+            '<div><h2 class="font-bold text-xl m-0">EXECUTIVE SUMMARY$2</h2>' +
+            '<p class="text-blue-100 text-sm mt-1">Overall security assessment</p></div></div>' +
+            '<div class="px-6 py-4">');
+        
+        styledHtml = styledHtml.replace(/<h[1-3]>(KEY FINDINGS|Key Findings)(.*)(<\/h[1-3]>)/g, 
+            '</div><div class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-4 flex items-center border-t border-gray-200">' +
+            '<div class="rounded-full bg-white p-2 mr-3"><i class="fas fa-key text-green-700 text-xl"></i></div>' +
+            '<div><h2 class="font-bold text-xl m-0">KEY FINDINGS$2</h2>' +
+            '<p class="text-green-100 text-sm mt-1">Most important observations</p></div></div>' +
+            '<div class="px-6 py-4">');
+        
+        styledHtml = styledHtml.replace(/<h[1-3]>(CRITICAL ISSUES|Critical Issues|CRITICAL VULNERABILITIES|Critical Vulnerabilities)(.*)(<\/h[1-3]>)/g, 
+            '</div><div class="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-4 flex items-center border-t border-gray-200">' +
+            '<div class="rounded-full bg-white p-2 mr-3"><i class="fas fa-exclamation-triangle text-red-700 text-xl"></i></div>' +
+            '<div><h2 class="font-bold text-xl m-0">CRITICAL ISSUES$2</h2>' +
+            '<p class="text-red-100 text-sm mt-1">Security vulnerabilities requiring attention</p></div></div>' +
+            '<div class="px-6 py-4">');
+        
+        styledHtml = styledHtml.replace(/<h[1-3]>(RECOMMENDATIONS|Recommendations)(.*)(<\/h[1-3]>)/g, 
+            '</div><div class="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-4 flex items-center border-t border-gray-200">' +
+            '<div class="rounded-full bg-white p-2 mr-3"><i class="fas fa-lightbulb text-amber-500 text-xl"></i></div>' +
+            '<div><h2 class="font-bold text-xl m-0">RECOMMENDATIONS$2</h2>' +
+            '<p class="text-amber-100 text-sm mt-1">Actions to improve security posture</p></div></div>' +
+            '<div class="px-6 py-4">');
+            
+        // Close the last section div
+        styledHtml = styledHtml + '</div>';
+        
+        // Style lists with better bullets and spacing
+        styledHtml = styledHtml.replace(/<ul>/g, '<ul class="list-disc ml-6 mb-4 text-gray-700 space-y-2">');
+        styledHtml = styledHtml.replace(/<ol>/g, '<ol class="list-decimal ml-6 mb-4 text-gray-700 space-y-2">');
+        
+        // Style paragraphs
+        styledHtml = styledHtml.replace(/<p>/g, '<p class="mb-4 text-gray-700">');
+        
+        // Style inline code and pre blocks
+        styledHtml = styledHtml.replace(/<code>/g, '<code class="bg-gray-100 text-red-600 px-1 py-0.5 rounded">');
+        styledHtml = styledHtml.replace(/<pre>/g, '<pre class="bg-gray-100 p-4 rounded-md overflow-x-auto mb-4">');
+        
+        // Create threat level badges
+        styledHtml = styledHtml.replace(/\b(Critical|High|Medium|Low)\b threat level/gi, 
+            (match) => {
+                const level = match.split(' ')[0].toLowerCase();
+                const color = level === 'critical' ? 'red-600' : 
+                            level === 'high' ? 'orange-600' : 
+                            level === 'medium' ? 'amber-500' : 'blue-500';
+                const bgColor = level === 'critical' ? 'red-100' : 
+                            level === 'high' ? 'orange-100' : 
+                            level === 'medium' ? 'amber-100' : 'blue-100';
+                return `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${bgColor} text-${color} border border-${color}">
+                          <span class="mr-1.5 h-2.5 w-2.5 rounded-full bg-${color}"></span>${match}
+                        </span>`;
+            });
+            
+        // Highlight specific security terms
+        styledHtml = styledHtml.replace(/\b(Critical|High|Medium|Low)\b/gi, 
+            (match) => {
+                if (match.toLowerCase() === 'critical') 
+                    return `<span class="font-semibold text-red-600">${match}</span>`;
+                if (match.toLowerCase() === 'high')
+                    return `<span class="font-semibold text-orange-600">${match}</span>`;
+                if (match.toLowerCase() === 'medium')
+                    return `<span class="font-semibold text-amber-600">${match}</span>`;
+                if (match.toLowerCase() === 'low')
+                    return `<span class="font-semibold text-blue-600">${match}</span>`;
+                return match;
+            });
+        
+        // Highlight attack types
+        styledHtml = styledHtml.replace(/\b(SQL Injection|XSS|CSRF|RCE|CVE-\d+-\d+|Remote Code Execution|Command Injection|Path Traversal|Brute Force)\b/gi, 
+            '<span class="inline-flex items-center px-2 py-1 rounded-md text-sm font-semibold bg-red-50 text-red-700 border border-red-200">$1</span>');
+        
+        // Style tables
+        styledHtml = styledHtml.replace(/<table>/g, 
+            '<table class="min-w-full divide-y divide-gray-300 border border-gray-200 rounded-md overflow-hidden">');
+        styledHtml = styledHtml.replace(/<thead>/g, 
+            '<thead class="bg-gray-50">');
+        styledHtml = styledHtml.replace(/<th>/g, 
+            '<th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">');
+        styledHtml = styledHtml.replace(/<tbody>/g, 
+            '<tbody class="divide-y divide-gray-200 bg-white">');
+        styledHtml = styledHtml.replace(/<td>/g, 
+            '<td class="px-4 py-3 text-sm text-gray-600">');
+        
+        return styledHtml;
+    }
+
+    // Download summary as PDF or markdown
+    function downloadSummaryReport() {
+        const summaryContent = document.getElementById('summaryContent');
+        const markdownContent = summaryContent.dataset.markdown;
+        
+        if (!markdownContent) return;
+        
+        // Create a blob with the markdown content
+        const blob = new Blob([markdownContent], { type: 'text/markdown' });
+        
+        // Create download link
+        const a = document.createElement('a');
+        a.download = `SeproWAF_Security_Report_${new Date().toISOString().slice(0, 10)}.md`;
+        a.href = window.URL.createObjectURL(blob);
+        a.style.display = 'none';
+        
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
+        window.URL.revokeObjectURL(a.href);
+        document.body.removeChild(a);
     }
 
     // Functions
@@ -781,8 +990,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize with default time range
     setDateRangeFromPreset(timeRange);
-});
-</script>
+});</script>
 
 <style>
 /* Add styles for severity and action badges */

@@ -157,3 +157,93 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Add loading animation for AI summary modal
+if (document.getElementById('summarizeLogsBtn')) {
+    // Define animation keyframes for gradient flow
+    document.head.insertAdjacentHTML('beforeend', `
+        <style>
+            @keyframes gradientFlow {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            .animate-gradientFlow {
+                animation: gradientFlow 3s ease infinite;
+            }
+            .animate-fadeIn {
+                animation: fadeIn 0.3s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .prose h1 {
+                font-size: 1.8rem;
+                font-weight: 700;
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+                color: #1f2937;
+            }
+            .prose h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-top: 1.4rem;
+                margin-bottom: 0.8rem;
+                color: #1f2937;
+            }
+            .prose h3 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-top: 1.3rem;
+                margin-bottom: 0.6rem;
+                color: #1f2937;
+            }
+            .prose p {
+                margin-bottom: 1rem;
+                line-height: 1.7;
+            }
+            .prose ul, .prose ol {
+                margin-bottom: 1rem;
+                padding-left: 1.5rem;
+            }
+            .prose li {
+                margin-bottom: 0.5rem;
+            }
+            .prose code {
+                background-color: #f3f4f6;
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+                color: #dc2626;
+            }
+            .prose pre {
+                background-color: #f3f4f6;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+                margin: 1rem 0;
+            }
+            .prose table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1.5rem 0;
+            }
+            .prose th, .prose td {
+                padding: 0.75rem;
+                border: 1px solid #e5e7eb;
+            }
+            .prose th {
+                background-color: #f9fafb;
+                font-weight: 600;
+            }
+            .prose blockquote {
+                border-left: 4px solid #e5e7eb;
+                padding-left: 1rem;
+                color: #4b5563;
+                font-style: italic;
+                margin: 1.5rem 0;
+            }
+        </style>
+    `);
+}
