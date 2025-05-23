@@ -15,7 +15,7 @@
         <div class="bg-white rounded-lg shadow">
             <div class="px-4 py-3 border-b flex justify-between items-center">
                 <h5 class="text-lg font-medium mb-0">
-                    <i class="bi bi-shield-lock text-blue-600 mr-2"></i>Active Rules
+                    <i class="bi bi-shield-lock text-blue-600 mr-2"></i>Active Custom Rules
                 </h5>
                 <button id="refreshRulesBtn" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded inline-flex items-center">
                     <i class="bi bi-arrow-repeat mr-1"></i> Refresh

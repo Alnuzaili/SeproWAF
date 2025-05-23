@@ -31,17 +31,31 @@ func (c *DashboardController) GetStats() {
 
 	// Requests count in last 24h
 	var requestsCount int64
-	requestsCount, _ = o.QueryTable(new(models.WAFLog)).Filter("created_at__gte", oneDayAgo).Count()
+	err := o.Raw("SELECT SUM(request_count) FROM sites").QueryRow(&requestsCount)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 
 	// Attacks count in last 24h
 	var attacksCount int64
 	attacksCount, _ = o.QueryTable(new(models.WAFLog)).Filter("created_at__gte", oneDayAgo).Filter("action", "blocked").Count()
+
+	// Get custom rules count - use "type" field instead of "is_custom"
+	var rulesCount int64
+	rulesCount, _ = o.QueryTable("waf_rules").Filter("type", models.CustomRule).Filter("status", models.StatusEnabled).Count()
+
+	// Get default rules count - use all rule types except CUSTOM
+	var defaultRulesCount int64
+	defaultRulesCount, _ = o.QueryTable("waf_rules").Filter("type__ne", models.CustomRule).Filter("status", models.StatusEnabled).Count()
 
 	c.Data["json"] = map[string]interface{}{
 		"success":        true,
 		"sites_count":    sitesCount,
 		"requests_count": requestsCount,
 		"attacks_count":  attacksCount,
+		"rules_count":    rulesCount + defaultRulesCount,
+		"custom_rules":   rulesCount,
+		"default_rules":  defaultRulesCount,
 	}
 	c.ServeJSON()
 }
@@ -67,19 +81,27 @@ func (c *DashboardController) GetTraffic() {
 		hourStart := now.Add(-time.Duration(i+1) * time.Hour)
 		hourEnd := now.Add(-time.Duration(i) * time.Hour)
 
-		// Count legitimate traffic (non-blocked requests)
-		legitimate[23-i], _ = o.QueryTable(new(models.WAFLog)).
-			Filter("created_at__gte", hourStart).
-			Filter("created_at__lt", hourEnd).
-			Filter("action__in", "allowed", "log").
-			Count()
-
-		// Count blocked attacks
+		// Count blocked attacks for this hour
 		blocked[23-i], _ = o.QueryTable(new(models.WAFLog)).
 			Filter("created_at__gte", hourStart).
 			Filter("created_at__lt", hourEnd).
 			Filter("action", "blocked").
 			Count()
+
+		// Get total requests for this hour period
+		var hourlyTotalRequests int64
+		hourlyQuery := "SELECT SUM(request_count) FROM sites WHERE updated_at >= ? AND updated_at < ?"
+		err := o.Raw(hourlyQuery, hourStart, hourEnd).QueryRow(&hourlyTotalRequests)
+		if err != nil {
+			fmt.Println("Error getting hourly request count:", err)
+			hourlyTotalRequests = 0
+		}
+
+		// Legitimate = total - blocked
+		legitimate[23-i] = hourlyTotalRequests - blocked[23-i]
+		if legitimate[23-i] < 0 {
+			legitimate[23-i] = 0 // Ensure we don't have negative values
+		}
 	}
 
 	c.Data["json"] = map[string]interface{}{

@@ -447,12 +447,6 @@ func (wm *WAFManager) WAFHandler(next http.Handler, siteID int, siteDomain strin
 
 		// Check interruption more verbosely
 		if intervention := tx.Interruption(); intervention != nil {
-			logs.Warning("WAF blocked request to %s after body processing: %s (status: %d, rule: %d, msg: %s)",
-				siteDomain,
-				intervention.Action,
-				intervention.Status,
-				intervention.RuleID,
-				intervention.Data)
 
 			// Log WAF blocking event
 			wafLogService.LogWAFEvent(

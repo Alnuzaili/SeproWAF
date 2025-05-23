@@ -241,7 +241,7 @@
                 </div>
                 
                 <div class="mt-4">
-                    <h6 class="font-medium mb-2">Recently Active Rules</h6>
+                    <h6 class="font-medium mb-2">Recently Active Custom Rules</h6>
                     <div class="overflow-x-auto">
                         <table class="w-full mb-0" id="recent-rules-table">
                             <thead>

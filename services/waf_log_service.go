@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -19,20 +21,24 @@ import (
 
 // WAFLogService handles logging for WAF events
 type WAFLogService struct {
-	logChan      chan *WAFLogEntry
-	wg           sync.WaitGroup
-	shutdown     chan struct{}
-	flushTicker  *time.Ticker
-	buffer       []*WAFLogEntry
-	bufferMutex  sync.Mutex
-	bufferSize   int
-	logDetails   bool // Whether to log detailed information like headers and bodies
-	retention    int  // Log retention in days
-	logBatch     []*WAFLogEntry
-	batchMutex   sync.Mutex
-	batchTicker  *time.Ticker
-	batchSize    int
-	shuttingDown bool
+	logChan         chan *WAFLogEntry
+	wg              sync.WaitGroup
+	shutdown        chan struct{}
+	flushTicker     *time.Ticker
+	buffer          []*WAFLogEntry
+	bufferMutex     sync.Mutex
+	bufferSize      int
+	logDetails      bool // Whether to log detailed information like headers and bodies
+	retention       int  // Log retention in days
+	logBatch        []*WAFLogEntry
+	batchMutex      sync.Mutex
+	batchTicker     *time.Ticker
+	batchSize       int
+	shuttingDown    bool
+	logFilePath     string // Directory path for file-based logs
+	logFileEnabled  bool   // Whether file-based logging is enabled
+	logFileRotation int    // Log file rotation period in days
+	logFileMutex    sync.Mutex
 }
 
 // WAFLogEntry represents a log entry to be processed
@@ -56,18 +62,44 @@ func NewWAFLogService(retentionDays int, logDetails bool, bufferSize int) *WAFLo
 		bufferSize = 500 // Larger default batch size
 	}
 
+	// Read file logging configuration
+	logFileEnabled := true
+	logFilePath := "logs/waf"
+	logFileRotation := 7 // Default to 7 days rotation
+
+	// Try to read from config if available
+	if enabled, err := web.AppConfig.Bool("WAFLogFileEnabled"); err == nil {
+		logFileEnabled = enabled
+	}
+	if path, err := web.AppConfig.String("WAFLogFilePath"); err == nil && path != "" {
+		logFilePath = path
+	}
+	if rotation, err := web.AppConfig.Int("WAFLogFileRotation"); err == nil && rotation > 0 {
+		logFileRotation = rotation
+	}
+
 	service := &WAFLogService{
-		logChan:     make(chan *WAFLogEntry, 5000), // Larger channel buffer
-		shutdown:    make(chan struct{}),
-		flushTicker: time.NewTicker(30 * time.Second), // Flush less frequently
-		buffer:      make([]*WAFLogEntry, 0, bufferSize),
-		bufferSize:  bufferSize,
-		logDetails:  logDetails,
-		retention:   retentionDays,
-		logBatch:    make([]*WAFLogEntry, 0, bufferSize),
-		batchMutex:  sync.Mutex{},
-		batchTicker: time.NewTicker(15 * time.Second), // Process batches less frequently
-		batchSize:   bufferSize,
+		logChan:         make(chan *WAFLogEntry, 5000), // Larger channel buffer
+		shutdown:        make(chan struct{}),
+		flushTicker:     time.NewTicker(30 * time.Second), // Flush less frequently
+		buffer:          make([]*WAFLogEntry, 0, bufferSize),
+		bufferSize:      bufferSize,
+		logDetails:      logDetails,
+		retention:       retentionDays,
+		logBatch:        make([]*WAFLogEntry, 0, bufferSize),
+		batchMutex:      sync.Mutex{},
+		batchTicker:     time.NewTicker(15 * time.Second), // Process batches less frequently
+		batchSize:       bufferSize,
+		logFileEnabled:  logFileEnabled,
+		logFilePath:     logFilePath,
+		logFileRotation: logFileRotation,
+	}
+
+	// Create log directory if it doesn't exist
+	if logFileEnabled {
+		if err := os.MkdirAll(logFilePath, 0755); err != nil {
+			logs.Error("Failed to create log directory: %v", err)
+		}
 	}
 
 	// Start background workers
@@ -98,15 +130,146 @@ func (s *WAFLogService) LogWAFEvent(tx txtype.Transaction, req *http.Request, ac
 		Timestamp:      time.Now(),
 	}
 
-	s.batchMutex.Lock()
-	s.logBatch = append(s.logBatch, entry)
-
-	// If we've reached batch size, signal immediate processing
-	if len(s.logBatch) >= s.batchSize {
-		// Process in a separate goroutine to avoid blocking
-		go s.flushBatch()
+	// Always write to file if enabled
+	if s.logFileEnabled {
+		go s.writeLogToFile(entry)
 	}
-	s.batchMutex.Unlock()
+
+	// Only add to database batch if this is a blocked request
+	if action == "blocked" {
+		s.batchMutex.Lock()
+		s.logBatch = append(s.logBatch, entry)
+
+		// If we've reached batch size, signal immediate processing
+		if len(s.logBatch) >= s.batchSize {
+			go s.flushBatch()
+		}
+		s.batchMutex.Unlock()
+	}
+}
+
+// writeLogToFile writes a log entry to a file
+func (s *WAFLogService) writeLogToFile(entry *WAFLogEntry) {
+	// Get date for log file name
+	dateStr := entry.Timestamp.Format("2006-01-02")
+	logFileName := fmt.Sprintf("waf-%s.log", dateStr)
+	logFilePath := filepath.Join(s.logFilePath, logFileName)
+
+	// Create formatted log entry
+	logEntry := s.formatLogEntry(entry)
+
+	// Open file with mutex to prevent concurrent writes causing issues
+	s.logFileMutex.Lock()
+	defer s.logFileMutex.Unlock()
+
+	// Open file in append mode, create if not exists
+	file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		logs.Error("Failed to open log file %s: %v", logFilePath, err)
+		return
+	}
+	defer file.Close()
+
+	// Write log entry to file
+	if _, err := file.WriteString(logEntry + "\n"); err != nil {
+		logs.Error("Failed to write log to file: %v", err)
+	}
+
+	// Clean up old log files occasionally
+	if entry.Timestamp.Minute() == 0 && entry.Timestamp.Second() < 30 {
+		go s.cleanupOldLogFiles()
+	}
+}
+
+// formatLogEntry creates a formatted log string from entry
+func (s *WAFLogService) formatLogEntry(entry *WAFLogEntry) string {
+	tx := entry.Transaction
+	req := entry.Request
+
+	// Extract client IP
+	clientIP := req.RemoteAddr
+	if ip, _, err := net.SplitHostPort(clientIP); err == nil {
+		clientIP = ip
+	}
+
+	// Collect rule matches
+	var ruleIDs []string
+	for _, rule := range tx.MatchedRules() {
+		r := rule.Rule()
+		ruleIDs = append(ruleIDs, fmt.Sprintf("%d", r.ID()))
+	}
+
+	// Format interruption info
+	interruptionInfo := "-"
+	if interruption := tx.Interruption(); interruption != nil {
+		interruptionInfo = fmt.Sprintf("%d:%s", interruption.RuleID, interruption.Action)
+	}
+
+	// Create Apache-like log format with WAF specific information
+	logEntry := fmt.Sprintf(
+		"%s - [%s] \"%s %s %s\" %d %d \"%s\" \"%s\" action=%s site=%d domain=%s processing=%dms rules=[%s] interruption=%s",
+		clientIP,
+		entry.Timestamp.Format("02/Jan/2006:15:04:05 -0700"),
+		req.Method,
+		req.URL.Path,
+		req.Proto,
+		entry.StatusCode,
+		entry.ResponseSize,
+		req.Header.Get("Referer"),
+		req.Header.Get("User-Agent"),
+		entry.Action,
+		entry.SiteID,
+		entry.Domain,
+		entry.ProcessingTime/1000000, // Convert nanoseconds to milliseconds
+		strings.Join(ruleIDs, ","),
+		interruptionInfo,
+	)
+
+	return logEntry
+}
+
+// cleanupOldLogFiles removes log files older than the rotation period
+func (s *WAFLogService) cleanupOldLogFiles() {
+	if !s.logFileEnabled || s.logFileRotation <= 0 {
+		return
+	}
+
+	cutoffDate := time.Now().AddDate(0, 0, -s.logFileRotation)
+	cutoffDateStr := cutoffDate.Format("2006-01-02")
+
+	// List log directory
+	files, err := os.ReadDir(s.logFilePath)
+	if err != nil {
+		logs.Error("Failed to read log directory: %v", err)
+		return
+	}
+
+	// Check each file
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		// Only process files matching our naming pattern
+		name := file.Name()
+		if !strings.HasPrefix(name, "waf-") || !strings.HasSuffix(name, ".log") {
+			continue
+		}
+
+		// Extract date part (waf-2023-01-01.log -> 2023-01-01)
+		datePart := strings.TrimPrefix(name, "waf-")
+		datePart = strings.TrimSuffix(datePart, ".log")
+
+		// If date is before cutoff, delete file
+		if datePart < cutoffDateStr {
+			fullPath := filepath.Join(s.logFilePath, name)
+			if err := os.Remove(fullPath); err != nil {
+				logs.Error("Failed to remove old log file %s: %v", fullPath, err)
+			} else {
+				logs.Info("Removed old log file: %s", fullPath)
+			}
+		}
+	}
 }
 
 // processLogs handles log entries from the channel

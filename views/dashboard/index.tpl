@@ -32,14 +32,14 @@
         <!-- Accounts Card -->
         <div class="bg-white rounded-lg shadow-md p-6 relative overflow-hidden border border-gray-100">
             <div class="flex flex-col">
-                <span class="text-gray-500 text-sm font-medium mb-2">Active Rules</span>
+                <span class="text-gray-500 text-sm font-medium mb-2">Active Custom Rules</span>
                 <div class="flex items-center">
                     <span class="text-2xl font-bold text-gray-800" id="rules-count">--</span>
                 </div>
                 <div class="flex items-center text-xs text-gray-500 mt-2">
-                    <span>↑ 25 Default</span>
+                    <span>↑ <span id="default-rules-count">--</span> Default</span>
                     <span class="mx-2">•</span>
-                    <span class="text-orange-500">↑ 02 Custom</span>
+                    <span class="text-orange-500">↑ <span id="custom-rules-count">--</span> Custom</span>
                 </div>
             </div>
             <div class="absolute right-4 top-4">
@@ -375,10 +375,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('attacks-count').textContent = stats.data.attacks_count || '0';
                 document.getElementById('requests-count').textContent = stats.data.requests_count || '0';
                 
-                // Try to set rules count if available
-                if (document.getElementById('rules-count')) {
-                    document.getElementById('rules-count').textContent = stats.data.rules_count || '27';
-                }
+                // Use actual rules count data
+                document.getElementById('rules-count').textContent = stats.data.rules_count || '0';
+                document.getElementById('default-rules-count').textContent = stats.data.default_rules || '0';
+                document.getElementById('custom-rules-count').textContent = stats.data.custom_rules || '0';
             }
             
             // Get traffic data for the chart
