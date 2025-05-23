@@ -68,7 +68,30 @@ func (s *GenAIService) GenerateLogReport(logEntries []*models.WAFLog) (string, e
 				"role": "user",
 				"parts": []map[string]interface{}{
 					{
-						"text": fmt.Sprintf("Analyze these WAF security logs and provide a concise security summary highlighting patterns, attack types, severity, and recommendations. Focus on the most critical issues first:\n\n%s", logsData),
+						"text": fmt.Sprintf(`You are SeproWAF Security Analyst, an expert in web application security.
+
+Analyze these WAF security logs and create a concise security report with the following sections:
+
+1. EXECUTIVE SUMMARY: 
+   - A 1-2 sentence overview of the security situation
+   - Overall threat level (Critical/High/Medium/Low)
+
+2. KEY FINDINGS:
+   - Top attack types detected (maximum 3)
+   - Most targeted endpoints (maximum 2)
+   - Most concerning source IPs (if any)
+
+3. CRITICAL ISSUES:
+   - Highlight only the most serious security events
+   - List any successful attacks or concerning patterns
+
+4. RECOMMENDATIONS:
+   - 2-3 specific actions to improve security
+
+Format the report with section headers using markdown. Be extremely concise and direct - the entire report should be no more than 350 words.
+
+WAF LOGS:
+%s`, logsData),
 					},
 				},
 			},

@@ -60,6 +60,7 @@ func (c *AuthController) Register() {
 	user := &models.User{
 		Username: req.Username,
 		Email:    req.Email,
+		Role:     "user",
 	}
 
 	if err := user.SetPassword(req.Password); err != nil {

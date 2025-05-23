@@ -7,7 +7,6 @@ services:
     image: bkimminich/juice-shop
     ports:
       - "7000:3000"
-
   dvwa:
     build: .
     image: ghcr.io/digininja/dvwa:latest
@@ -22,7 +21,6 @@ services:
     ports:
       - 127.0.0.1:4280:80
     restart: unless-stopped
-
   db:
     image: docker.io/library/mariadb:10
     environment:
@@ -35,11 +33,35 @@ services:
     networks:
       - dvwa
     restart: unless-stopped
-
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        MYSQL_DATABASE: ${DB_DATABASE}
+        # MYSQL_USER: ${DB_USERNAME}
+        # MYSQL_PASSWORD: ${DB_PASSWORD}
+        MYSQL_ROOT_PASSWORD: ""
+    ports:
+        - "3306:3306"
+    volumes:
+        - mysql_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_container
+    restart: always
+    environment:
+        PMA_HOST: mysql
+        MYSQL_ROOT_PASSWORD: ""
+    ports:
+        - "8010:80"
+    depends_on:
+        - mysql
 
 volumes:
   dvwa:
-
+  mysql_data:
 
 networks:
   dvwa:

@@ -80,11 +80,7 @@
     <div class="relative z-10 max-w-6xl mx-auto px-4">
         <div class="bg-slate-800/70 backdrop-blur-sm border border-indigo-500/20 rounded-lg shadow-2xl overflow-hidden">
             <div class="p-2">
-                <div class="flex items-center gap-1 absolute left-4 top-4">
-                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
+
                 <img src="/static/img/dash-screen.png" alt="SeproWAF Dashboard" class="w-full rounded" />
             </div>
         </div>
